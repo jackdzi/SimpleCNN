@@ -1,4 +1,11 @@
 #define BYTE unsigned char
+#ifdef _WIN32
+#include <direct.h>  // For Windows
+#define GetCurrentDir _getcwd
+#else
+#include <unistd.h> // For Unix-like systems
+#define GetCurrentDir getcwd
+#endif
 
 #include <armadillo>
 #include <iostream>
@@ -12,3 +19,4 @@ std::optional<std::pair<arma::dmat, arma::uvec>> readFile(std::string train, std
 arma::dmat imageToDmat(std::ifstream &file);
 arma::uvec labelToUvec(std::ifstream &file);
 void endianSwitch(int &num); 
+std::string directoryPrefix();
