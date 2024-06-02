@@ -1,8 +1,9 @@
-#include <iostream>
+#include "convertData.h"
 
 using std::cout;
 
-int main(void) {
-    cout << "Brick";
-    return 1;
+int main(int argc, char **argv) {
+    std::string train_path = directoryPrefix();
+    cout << train_path + "Hello" << std::endl;
+    return 0;
 }

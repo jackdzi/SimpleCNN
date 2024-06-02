@@ -1,0 +1,134 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"install"
+		],
+		"files" : 
+		[
+			"libraries/armadillo-12.8.4/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 567,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 574,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 600,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 623,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 637,
+				"parent" : 0
+			}
+		]
+	},
+	"installers" : 
+	[
+		{
+			"backtrace" : 1,
+			"component" : "Unspecified",
+			"destination" : "include",
+			"paths" : 
+			[
+				{
+					"from" : "build/libraries/armadillo-12.8.4/tmp/include",
+					"to" : "."
+				}
+			],
+			"type" : "directory"
+		},
+		{
+			"backtrace" : 2,
+			"component" : "Unspecified",
+			"destination" : "lib",
+			"paths" : 
+			[
+				"libraries/armadillo-12.8.4/libarmadillo.dll.a"
+			],
+			"targetId" : "armadillo::@e8fe3a4665c3214312f7",
+			"targetIndex" : 1,
+			"targetIsImportLibrary" : true,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 2,
+			"component" : "Unspecified",
+			"destination" : "bin",
+			"paths" : 
+			[
+				"libraries/armadillo-12.8.4/libarmadillo.dll"
+			],
+			"targetId" : "armadillo::@e8fe3a4665c3214312f7",
+			"targetIndex" : 1,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 3,
+			"component" : "dev",
+			"destination" : "share/Armadillo/CMake",
+			"exportName" : "ArmadilloLibraryDepends",
+			"exportTargets" : 
+			[
+				{
+					"id" : "armadillo::@e8fe3a4665c3214312f7",
+					"index" : 1
+				}
+			],
+			"paths" : 
+			[
+				"libraries/armadillo-12.8.4/CMakeFiles/Export/d5f1c8e7a348faccefbb4ca918240c99/ArmadilloLibraryDepends.cmake"
+			],
+			"type" : "export"
+		},
+		{
+			"backtrace" : 4,
+			"component" : "dev",
+			"destination" : "/usr/share/Armadillo/CMake",
+			"paths" : 
+			[
+				"build/libraries/armadillo-12.8.4/InstallFiles/ArmadilloConfig.cmake",
+				"build/libraries/armadillo-12.8.4/InstallFiles/ArmadilloConfigVersion.cmake"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 5,
+			"component" : "Unspecified",
+			"destination" : "lib/pkgconfig",
+			"paths" : 
+			[
+				"build/libraries/armadillo-12.8.4/tmp/misc/armadillo.pc"
+			],
+			"type" : "file"
+		}
+	],
+	"paths" : 
+	{
+		"build" : "libraries/armadillo-12.8.4",
+		"source" : "libraries/armadillo-12.8.4"
+	}
+}

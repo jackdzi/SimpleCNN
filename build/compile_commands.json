@@ -1,0 +1,32 @@
+[
+{
+  "directory": "C:/Users/Jackg/Desktop/Code_Projects/Personal/SimpleCNN/build",
+  "command": "C:/msys64/ucrt64/bin/c++.exe  @CMakeFiles/SimpleCNN.dir/includes_CXX.rsp -g -std=gnu++17 -o CMakeFiles/SimpleCNN.dir/src/convertData.cpp.obj -c C:/Users/Jackg/Desktop/Code_Projects/Personal/SimpleCNN/src/convertData.cpp",
+  "file": "C:/Users/Jackg/Desktop/Code_Projects/Personal/SimpleCNN/src/convertData.cpp",
+  "output": "CMakeFiles/SimpleCNN.dir/src/convertData.cpp.obj"
+},
+{
+  "directory": "C:/Users/Jackg/Desktop/Code_Projects/Personal/SimpleCNN/build",
+  "command": "C:/msys64/ucrt64/bin/c++.exe  @CMakeFiles/SimpleCNN.dir/includes_CXX.rsp -g -std=gnu++17 -o CMakeFiles/SimpleCNN.dir/src/driver.cpp.obj -c C:/Users/Jackg/Desktop/Code_Projects/Personal/SimpleCNN/src/driver.cpp",
+  "file": "C:/Users/Jackg/Desktop/Code_Projects/Personal/SimpleCNN/src/driver.cpp",
+  "output": "CMakeFiles/SimpleCNN.dir/src/driver.cpp.obj"
+},
+{
+  "directory": "C:/Users/Jackg/Desktop/Code_Projects/Personal/SimpleCNN/build/libraries/armadillo-12.8.4",
+  "command": "C:/msys64/ucrt64/bin/c++.exe -Darmadillo_EXPORTS @CMakeFiles/armadillo.dir/includes_CXX.rsp  -O2 -g -std=c++11 -o CMakeFiles/armadillo.dir/src/wrapper1.cpp.obj -c C:/Users/Jackg/Desktop/Code_Projects/Personal/SimpleCNN/libraries/armadillo-12.8.4/src/wrapper1.cpp",
+  "file": "C:/Users/Jackg/Desktop/Code_Projects/Personal/SimpleCNN/libraries/armadillo-12.8.4/src/wrapper1.cpp",
+  "output": "libraries/armadillo-12.8.4/CMakeFiles/armadillo.dir/src/wrapper1.cpp.obj"
+},
+{
+  "directory": "C:/Users/Jackg/Desktop/Code_Projects/Personal/SimpleCNN/build/libraries/armadillo-12.8.4",
+  "command": "C:/msys64/ucrt64/bin/c++.exe -Darmadillo_EXPORTS @CMakeFiles/armadillo.dir/includes_CXX.rsp  -O2 -g -std=c++11 -o CMakeFiles/armadillo.dir/src/wrapper2.cpp.obj -c C:/Users/Jackg/Desktop/Code_Projects/Personal/SimpleCNN/libraries/armadillo-12.8.4/src/wrapper2.cpp",
+  "file": "C:/Users/Jackg/Desktop/Code_Projects/Personal/SimpleCNN/libraries/armadillo-12.8.4/src/wrapper2.cpp",
+  "output": "libraries/armadillo-12.8.4/CMakeFiles/armadillo.dir/src/wrapper2.cpp.obj"
+},
+{
+  "directory": "C:/Users/Jackg/Desktop/Code_Projects/Personal/SimpleCNN/build/libraries/armadillo-12.8.4/tests1",
+  "command": "C:/msys64/ucrt64/bin/c++.exe  @CMakeFiles/smoke_test.dir/includes_CXX.rsp  -O2 -g -std=c++11 -o CMakeFiles/smoke_test.dir/smoke_test.cpp.obj -c C:/Users/Jackg/Desktop/Code_Projects/Personal/SimpleCNN/libraries/armadillo-12.8.4/tests1/smoke_test.cpp",
+  "file": "C:/Users/Jackg/Desktop/Code_Projects/Personal/SimpleCNN/libraries/armadillo-12.8.4/tests1/smoke_test.cpp",
+  "output": "libraries/armadillo-12.8.4/tests1/CMakeFiles/smoke_test.dir/smoke_test.cpp.obj"
+}
+]

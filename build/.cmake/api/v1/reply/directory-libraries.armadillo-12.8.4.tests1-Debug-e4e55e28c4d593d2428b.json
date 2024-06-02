@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "libraries/armadillo-12.8.4/tests1",
+		"source" : "libraries/armadillo-12.8.4/tests1"
+	}
+}

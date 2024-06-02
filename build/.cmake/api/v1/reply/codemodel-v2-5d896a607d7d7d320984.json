@@ -1,0 +1,132 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Debug-d0094a50bb2071803777.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.29"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0
+					]
+				},
+				{
+					"build" : "libraries/armadillo-12.8.4",
+					"childIndexes" : 
+					[
+						2
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-libraries.armadillo-12.8.4-Debug-3f4280459f3d845d2226.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "2.8.12"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 1,
+					"source" : "libraries/armadillo-12.8.4",
+					"targetIndexes" : 
+					[
+						1
+					]
+				},
+				{
+					"build" : "libraries/armadillo-12.8.4/tests1",
+					"jsonFile" : "directory-libraries.armadillo-12.8.4.tests1-Debug-e4e55e28c4d593d2428b.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "2.8.12"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 1,
+					"source" : "libraries/armadillo-12.8.4/tests1",
+					"targetIndexes" : 
+					[
+						2
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"childIndexes" : 
+					[
+						1
+					],
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "SimpleCNN",
+					"targetIndexes" : 
+					[
+						0
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						1,
+						2
+					],
+					"name" : "armadillo",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						1,
+						2
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "SimpleCNN::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-SimpleCNN-Debug-6d533afa5621b20f4e9e.json",
+					"name" : "SimpleCNN",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "armadillo::@e8fe3a4665c3214312f7",
+					"jsonFile" : "target-armadillo-Debug-af43deb2f868c03c6ee9.json",
+					"name" : "armadillo",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "smoke_test::@8cad03ec0a00d488dc5c",
+					"jsonFile" : "target-smoke_test-Debug-4e5b9860477f4c1a3f1e.json",
+					"name" : "smoke_test",
+					"projectIndex" : 1
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/Users/Jackg/Desktop/Code_Projects/Personal/SimpleCNN/build",
+		"source" : "C:/Users/Jackg/Desktop/Code_Projects/Personal/SimpleCNN"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 7
+	}
+}
