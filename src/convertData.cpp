@@ -6,6 +6,7 @@ std::optional<std::variant<arma::dmat, arma::uvec>> readFile(std::string path) {
         int file_type;
         file.read((char *)&file_type, 4*sizeof(BYTE));
         endianSwitch(file_type);
+        std::cout << file_type << std::endl;
         if (file_type == 2051)
             return imageToDmat(file);
         else if (file_type == 2049) 
@@ -24,7 +25,7 @@ arma::dmat imageToDmat(std::ifstream &file) {
     endianSwitch(rows);
     endianSwitch(cols);
     arma::dmat matrix;
-    matrix.set_size(rows, cols);
+    matrix.set_size(images, rows*cols);
     for (int i = 0; i < images; i++) {
         for (int j = 0; j < rows*cols; j++) {
             BYTE temp;
@@ -32,7 +33,7 @@ arma::dmat imageToDmat(std::ifstream &file) {
             matrix(i, j) = static_cast<double>(temp) / 256;
         }
     }
-    return matrix.t(); //armadillo stores matrixes in column major order
+    return matrix; //armadillo stores matrixes in column major order
 }
 
 arma::uvec labelToUvec(std::ifstream &file) {
