@@ -1,7 +1,7 @@
-#include "convertData.cpp"
+#include "../include/convertData.h"
 using std::cout;
 
-int main(int argc, char **argv) {
+int main() {
   std::string prefix = directoryPrefix();
   if (prefix.substr(prefix.size() - 6, 6) == "/build")
     prefix = prefix.substr(0, prefix.size() - 6);
@@ -9,7 +9,6 @@ int main(int argc, char **argv) {
   auto matrix = readFile(train_path + "/train-images.idx3-ubyte");
   auto labels = readFile(train_path + "/train-labels.idx1-ubyte");
   int number = 5;
-
 
   if (matrix.has_value()) {
     if (std::holds_alternative<std::vector<std::vector<double>>>(
