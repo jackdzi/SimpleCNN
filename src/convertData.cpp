@@ -6,7 +6,6 @@ std::optional<std::variant<std::vector<std::vector<double>>, std::vector<unsigne
     int file_type;
     file.read((char *)&file_type, 4 * sizeof(BYTE));
     endianSwitch(file_type);
-    std::cout << file_type << std::endl;
     if (file_type == 2051)
       return imageToDmat(file);
     else if (file_type == 2049)
