@@ -5,6 +5,7 @@ Layer::Layer(int filter_param) {
   // makes n x n filter of homogenous value
   filter = vector<vector<double>>(filter_param, vector<double>(filter_param, 1));
   data = vector<vector<double>>(28, vector<double>(28, 1));
+  pooledData = vector<vector<double>>(14, vector<double>(14, 1));
 };
 
 // use when loading in image from matrix
@@ -59,4 +60,22 @@ void Layer::convolve() {
   return;
 }
 // Pooling
-//TODO: Implement pooling
+void Layer::maxPool2d() {
+
+  for (int i = 0; i < 14; i++) {
+    for (int j = 0 ; j < 14; j++) {
+      double max = 0.0;
+
+      for (int k = 0; k < 2; k++) {
+        for (int w = 0; w < 2; w++) {
+          if (data[i * 2 + k][j * 2 + w] > max) {
+            max = data[i * 2 + k][j * 2 + w];
+          };
+        };
+      pooledData[i][j] = max;
+      };
+    };
+  };
+  return;
+
+}

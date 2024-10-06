@@ -16,6 +16,8 @@ private:
 public:
   // make public for testing b/c none of your functions return the data
   vector<vector<double>> data;
+  // pooled data layer
+  vector<vector<double>> pooledData;
   //Constructor
   Layer(int filter_param); 
   //Load data in for first layer
@@ -27,5 +29,5 @@ public:
   // Convolution
   void convolve();
   // Pooling
-  void pool();
+  void maxPool2d();
 };

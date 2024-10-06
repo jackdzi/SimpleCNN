@@ -18,8 +18,9 @@ int main() {
         if (i % 28 == 0)
           cout << std::endl;
         if (std::get<std::vector<std::vector<double>>>(
-                matrix.value())[number][i] > 0.5)
-          cout << 1;
+                matrix.value())[number][i] > 0)
+          cout << static_cast<int>((std::get<std::vector<std::vector<double>>>(
+                matrix.value())[number][i]));
         else
           cout << 0;
       }
@@ -36,6 +37,14 @@ int main() {
   for (int i = 0; i < 28; i++) {
     for (int j = 0; j < 28; j++) {
       cout << static_cast<int>(layer.data[i][j]) << " ";
+    }
+    cout << std::endl;
+  }
+  
+  layer.maxPool2d();
+  for (int i = 0; i < 14; i++) {
+    for (int j = 0; j < 14; j++) {
+      cout << static_cast<int>(layer.pooledData[i][j]) << " ";
     }
     cout << std::endl;
   }
