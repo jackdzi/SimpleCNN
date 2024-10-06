@@ -12,13 +12,16 @@ using std::cout;
 
 class Layer {
 private:
-  vector<vector<double>> data;
   vector<vector<double>> filter;
 public:
+  // make public for testing b/c none of your functions return the data
+  vector<vector<double>> data;
   //Constructor
   Layer(int filter_param); 
   //Load data in for first layer
-  void load(const vector<vector<double>> input);
+  void loadFromImages(const vector<double> input);
+
+  void loadIntoLayer(const vector<vector<double>> input);
   //Add padding
   vector<vector<double>> padding(int n);
   // Convolution
