@@ -24,7 +24,7 @@ vector<vector<double>> Layer::padding(int n) {
   return padded;
 }
 // Convolution
-void Layer::convolve(const vector<vector<double>> input) {
+void Layer::convolve() {
   int padding = 2;
   vector<vector<double>> padded = Layer::padding(padding);
   vector<vector<double>> res = vector<vector<double>>(28, vector<double>(28, 0));
@@ -33,12 +33,14 @@ void Layer::convolve(const vector<vector<double>> input) {
       double sum = 0.0;
       for (int k = 0; k < FILTER_SIZE; k++) {
         for (int w = 0; w < FILTER_SIZE; w++) {
-          sum += filter[k][w] * padded[i - 1 + k][j - 1 + w]; //Change when FILTER_SIZE changes
+          sum += filter[k][w] * padded[i - 1 + k][j - 1 + w]; //WARN: Change when FILTER_SIZE changes
         };
       };
       res[i][j] = sum;
     };
   };
+  load(res);
   return;
 }
 // Pooling
+//TODO: Implement pooling

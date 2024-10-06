@@ -22,7 +22,7 @@ public:
   //Add padding
   vector<vector<double>> padding(int n);
   // Convolution
-  void convolve(const vector<vector<double>> input);
+  void convolve();
   // Pooling
   void pool();
 };
