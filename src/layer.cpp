@@ -33,7 +33,7 @@ void Layer::convolve(const vector<vector<double>> input) {
       double sum = 0.0;
       for (int k = 0; k < FILTER_SIZE; k++) {
         for (int w = 0; w < FILTER_SIZE; w++) {
-          sum += filter[k][w] * padded[i - 1 + k][j - 1 + w];
+          sum += filter[k][w] * padded[i - 1 + k][j - 1 + w]; //Change when FILTER_SIZE changes
         };
       };
       res[i][j] = sum;
