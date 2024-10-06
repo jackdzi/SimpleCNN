@@ -1,11 +1,9 @@
 #include "./convertData.h"
+#include "./layer.h"
 
 class Model {
+private:
+  std::vector<Layer> layers;
 public:
-  // TODO
-
-  std::vector<layer> layers;
-  Model(){
-
-  };
+  Model();
 };
