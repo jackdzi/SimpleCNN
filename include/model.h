@@ -1,12 +1,13 @@
 #include "./convertData.h"
 #include "./layer.h"
+#include "./classification.h"
 
 class Model {
 private:
+  int num_layers;
   std::vector<Layer> layers;
-  Connected connected; //TODO: Implement fully connected layer, also implement returnProbabiilities method
+  Classification fully_connected;
 public:
-  Model();
-  void forwardPropagate(vector<vector<double>> input);
-  vector<double> returnProbabiilities();
+  Model(vector<int> convolution_size, vector<int> cLayer_sizes, vector<int> filter_type, vector<int> pooling_size);
+  vector<double> forwardPropagate(vector<double> input);
 };

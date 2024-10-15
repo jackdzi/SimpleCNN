@@ -14,12 +14,14 @@ class Layer {
 private:
   vector<vector<double>> filter;
 public:
+  int size;
+  int pooled_size; 
   // make public for testing b/c none of your functions return the data
   vector<vector<double>> data;
   // pooled data layer
-  vector<vector<double>> pooledData;
+  vector<vector<double>> pooled_data;
   //Constructor
-  Layer(int filter_param); 
+  Layer(int filter_param, int input_size, int pooling_size); 
   //Load data in for first layer
   void loadFromImages(const vector<double> input);
 
@@ -27,7 +29,7 @@ public:
   //Add padding
   vector<vector<double>> padding(int n);
   // Convolution
-  void convolve();
+  void convolve(); //TODO: Implement some dropout
   // Pooling
   void maxPool2d();
 };
