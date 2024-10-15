@@ -19,7 +19,7 @@ cLayer::cLayer(int num_nodes, int prev_nodes)
 
 void cLayer::loadFromLayer(const std::vector<vector<double>> input,
                            int dim_prev) {
-  for (int k = 0; k < this->size; k++) {
+  for (int k = 0; k < size; k++) {
       for (int i = 0; i < dim_prev; i++) {
         for (int j = 0; j < dim_prev; j++) {
           data[k] += input[i][j] * weights[k][i * dim_prev + j];
