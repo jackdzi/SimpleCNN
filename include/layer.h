@@ -17,7 +17,7 @@ public:
   int size;
   int pooled_size; 
   // make public for testing b/c none of your functions return the data
-  vector<vector<double>> data;
+  vector<vector<double>> data; // TODO : Add multiple filters and make data, pooled_data, filter multidimensional. Please modify constructor too
   // pooled data layer
   vector<vector<double>> pooled_data;
   //Constructor
