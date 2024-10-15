@@ -29,6 +29,7 @@ void Layer::loadIntoLayer(const std::vector<std::vector<double>> input) {
   };
   return;
 };
+
 //Padding
 vector<vector<double>> Layer::padding(int n) {
   vector<vector<double>> padded = vector<vector<double>>(size + 2*n, vector<double>(size + 2*n, 0));

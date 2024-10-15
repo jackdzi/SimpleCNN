@@ -6,9 +6,9 @@ using std::cout;
 Classification::Classification(vector<int> layer_sizes, int input_size) {
   size = layer_sizes.size();
   if (layer_sizes[size-1] != 10)
-    cout << "ERROR: LAST LAYER MUST HAVE 10 NODES" << std::endl;
+    cout << "Warning: Last layer must have 10 nodes" << std::endl;
   connected.push_back(cLayer(layer_sizes[0], input_size));
-  for (int i = 1; i < layer_sizes.size()-1; i++) {
+  for (int i = 1; i < layer_sizes.size(); i++) {
     connected.push_back(cLayer(layer_sizes[i], layer_sizes[i-1]));
   }
 }
