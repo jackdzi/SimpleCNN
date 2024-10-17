@@ -4,6 +4,7 @@
 #include <optional>
 #include <variant>
 #include <vector>
+#include <random>
 
 using std::vector;
 using std::cout;
@@ -13,7 +14,10 @@ using std::cout;
 class Layer {
 private:
   vector<vector<double>> filter;
+  bool is_training;
+  std::vector<std::vector<bool>> dropout_mask;
 public:
+
   int size;
   int pooled_size; 
   // make public for testing b/c none of your functions return the data
@@ -31,5 +35,9 @@ public:
   // Convolution
   void convolve(); //TODO: Implement some dropout
   // Pooling
-  void maxPool2d();
+  void maxPool2d(bool train_mode, double dropout_rate);
+  // Dropout
+  void initializeDropoutMask(int rows, int cols);
+  void setTrainingMode(bool mode);
+  void applyDropout(double dropout_rate);
 };

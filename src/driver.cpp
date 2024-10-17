@@ -46,8 +46,8 @@ int main() {
     }
     cout << std::endl;
   }
-  
-  layer.maxPool2d();
+  // true means training is on, false means testing runs
+  layer.maxPool2d(true, 0.0);
   for (int i = 0; i < layer.pooled_size; i++) {
     for (int j = 0; j < layer.pooled_size; j++) {
       cout << static_cast<int>(layer.pooled_data[i][j]);
@@ -58,7 +58,7 @@ int main() {
   Layer layer1 = Layer(FILTER_SIZE, 14, 2);
   layer1.loadIntoLayer(layer.pooled_data);
   layer1.convolve();
-  layer1.maxPool2d();
+  layer1.maxPool2d(true, 0.0);
   for (int i = 0; i < layer1.pooled_size; i++) {
     for (int j = 0; j < layer1.pooled_size; j++) {
       cout << static_cast<int>(layer1.pooled_data[i][j] / 10);
