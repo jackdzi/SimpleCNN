@@ -14,8 +14,6 @@ using std::cout;
 class Layer {
 private:
   vector<vector<double>> filter;
-  bool is_training;
-  std::vector<std::vector<bool>> dropout_mask;
 public:
 
   int size;
@@ -37,7 +35,5 @@ public:
   // Pooling
   void maxPool2d(bool train_mode, double dropout_rate);
   // Dropout
-  void initializeDropoutMask(int rows, int cols);
-  void setTrainingMode(bool mode);
   void applyDropout(double dropout_rate);
 };

@@ -79,50 +79,25 @@ void Layer::maxPool2d(bool train_mode, double dropout_rate) {
       };
     };
   };
-  setTrainingMode(train_mode);
-  initializeDropoutMask(pooled_size, pooled_size);
-  applyDropout(dropout_rate);
+  if (train_mode == true)
+    applyDropout(dropout_rate);
   return;
 }
 
-// Dropout
-void Layer::setTrainingMode(bool mode) {
-  is_training = mode;
-}
-
-// Initialize Dropout Mask based on current data size
-void Layer::initializeDropoutMask(int rows, int cols) {
-  dropout_mask = std::vector<std::vector<bool>>(rows, std::vector<bool>(cols, true));
-}
 
 // Dropout rate of pixels, set to 0.0 to disable. 
 void Layer::applyDropout(double dropout_rate) {
-  if (!is_training) {
-    double scale = 1.0 - dropout_rate;
-    for (auto& row : pooled_data) {
-      for (auto& elem : row) {
-        elem *= scale;
-      }
-    }
-    return;
-  }
-
   std::random_device rd;
   std::mt19937 gen(rd());
   std::uniform_real_distribution<> distro{0.0, 1.0};
-
+  double scale = 1.0 - dropout_rate;
   for (int i = 0; i < pooled_size; i++) {
     for (int j = 0; j < pooled_size; j++) {
       double rand = distro(gen);
-      if (rand < dropout_rate) {
-        dropout_mask[i][j] = false;
+      if (rand < dropout_rate)
         pooled_data[i][j] = 0;
-      }
       else
-      {
-        dropout_mask[i][j] = true;
-        pooled_data[i][j] /= (1.0 - dropout_rate);
-      }
+        pooled_data[i][j] /= scale;
     }
   }
 }
