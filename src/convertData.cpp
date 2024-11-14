@@ -1,6 +1,6 @@
 #include "../include/convertData.h"
 
-std::optional<std::variant<std::vector<std::vector<double>>, std::vector<unsigned int>>> readFile(std::string path) {
+std::optional<std::variant<vector<image>, vector<unsigned int>>> readFile(std::string path) {
   std::ifstream file(path, ios::binary);
   if (file.is_open()) {
     int file_type;
@@ -15,7 +15,7 @@ std::optional<std::variant<std::vector<std::vector<double>>, std::vector<unsigne
   return {};
 }
 
-std::vector<std::vector<double>> imageToDmat(std::ifstream &file) {
+vector<image> imageToDmat(std::ifstream &file) {
   int images, rows, cols;
   file.read((char *)&images, 4 * sizeof(BYTE));
   file.read((char *)&rows, 4 * sizeof(BYTE));
@@ -23,18 +23,19 @@ std::vector<std::vector<double>> imageToDmat(std::ifstream &file) {
   endianSwitch(images);
   endianSwitch(rows);
   endianSwitch(cols);
-  std::vector<std::vector<double>> matrix(images, std::vector<double>(rows * cols));
 
+  vector<image> result(images, image(rows, cols));
   for (int i = 0; i < images; i++) {
-    for (int j = 0; j < rows * cols; j++) {
-      BYTE temp;
-      file.read((char *)&temp, sizeof(BYTE));
-      matrix[i][j] = static_cast<double>(temp) / 256;
+    for (int j = 0; j < rows; j++) {
+      for (int k = 0; k < cols; k++) {
+        BYTE temp;
+        file.read((char *)&temp, sizeof(BYTE));
+        result[i].entry[j][k] = static_cast<double>(temp) / 256;
+      }
     }
   }
-  vector<image> result(images, image(rows, cols));
 
-  return matrix;
+  return result;
 }
 
 std::vector<unsigned int> labelToUvec(std::ifstream &file) {

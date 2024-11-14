@@ -11,21 +11,30 @@
 #include <functional>
 #include <iostream>
 #include <optional>
+#include <random>
 #include <variant>
 #include <vector>
-#include <random>
 
-using std::vector;
 using std::cout;
 using std::ios;
+using std::vector;
 
 #define BYTE unsigned char
 
 struct filter {
-    vector<vector<double>> fweights;
+  vector<vector<double>> fweights;
+
+  filter(int dim, std::mt19937 gen, std::normal_distribution<> d) {
+
+    for (auto &row : fweights) {
+      for (auto &weight : row) {
+        weight = d(gen);
+      }
+    }
+  }
 };
 struct image {
-    vector<vector<double>> entry;
+  vector<vector<double>> entry;
 
-    image(size_t rows, size_t cols) : entry(rows, vector<double>(cols, 0.0)) {}
+  image(size_t rows, size_t cols) : entry(rows, vector<double>(cols, 0.0)) {}
 };

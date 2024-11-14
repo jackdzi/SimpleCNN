@@ -14,9 +14,10 @@ public:
   vector<image> data;
 
 
-  vector<vector<vector<double>>> pooled_data;
+  vector<image> pooled_data;
   //Constructor
-  Layer(int filter_param, int input_size, int pooling_size);
+  Layer(int num_kernels, int input_size, int input_depth, int pooling_size,
+             int filter_size);
   //Load data in for first layer
   void loadFromImages(const vector<double> input);
 

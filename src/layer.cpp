@@ -1,27 +1,19 @@
 #include "../include/layer.h"
 using std::vector;
 
-Layer::Layer(int filter_param, int input_size, int pooling_size) {
+Layer::Layer(int num_kernels, int input_size, int input_depth, int pooling_size,
+             int filter_size) {
   // makes n x n filter of homogenous value
   size = input_size;
   pooled_size = input_size / pooling_size;
-  filter =
-      vector<vector<double>>(filter_param, vector<double>(filter_param, 1));
-  data = vector<vector<double>>(size, vector<double>(size, 1));
-  pooled_data =
-      vector<vector<double>>(pooled_size, vector<double>(pooled_size, 1));
+  std::random_device rd;
+  std::mt19937 gen(rd());
+  std::normal_distribution<> d(0, sqrt(2.0 / filter_size));
+  kernels = vector<vector<filter>>(
+      num_kernels, vector<filter>(input_depth, filter(filter_size, gen, d)));
+  data = vector<image>(input_depth, image(input_size, input_size));
+  pooled_data = vector<image>(input_depth, image(input_size, input_size));
 };
-
-// use when loading in image from matrix
-void Layer::loadFromImages(const std::vector<double> input) {
-  for (int i = 0; i < size; i++) {
-    for (int j = 0; j < size; j++) {
-      data[i][j] = input[i * size + j];
-    }
-  }
-  return;
-};
-
 
 // Convolution
 void Layer::correlate(const vector<image> img, int kernel) {
@@ -63,17 +55,19 @@ void Layer::convolution(const vector<image> img, int kernel) {
 
 // Pooling
 void Layer::maxPool2d(bool train_mode, double dropout_rate) {
-  for (int i = 0; i < pooled_size; i++) {
-    for (int j = 0; j < pooled_size; j++) {
-      double max = 0.0;
+  for (int image = 0; image < num_filters; image++) {
+    for (int i = 0; i < pooled_size; i++) {
+      for (int j = 0; j < pooled_size; j++) {
+        double max = 0.0;
 
-      for (int k = 0; k < 2; k++) {
-        for (int w = 0; w < 2; w++) {
-          if (data[i * 2 + k][j * 2 + w] > max)
-            max = data[i * 2 + k][j * 2 + w];
+        for (int k = 0; k < 2; k++) {
+          for (int w = 0; w < 2; w++) {
+            if (data[image].entry[i * 2 + k][j * 2 + w] > max)
+              max = data[image].entry[i * 2 + k][j * 2 + w];
+          }
         }
+        pooled_data[image].entry[i][j] = max;
       }
-      pooled_data[i][j] = max;
     }
   }
   if (train_mode == true)
@@ -86,13 +80,15 @@ void Layer::applyDropout(double dropout_rate) {
   std::mt19937 gen(rd());
   std::uniform_real_distribution<> distro{0.0, 1.0};
   double scale = 1.0 - dropout_rate;
-  for (int i = 0; i < pooled_size; i++) {
-    for (int j = 0; j < pooled_size; j++) {
-      double rand = distro(gen);
-      if (rand < dropout_rate)
-        pooled_data[i][j] = 0;
-      else
-        pooled_data[i][j] /= scale;
+  for (int image = 0; image < num_filters; image++) {
+    for (int i = 0; i < pooled_size; i++) {
+      for (int j = 0; j < pooled_size; j++) {
+        double rand = distro(gen);
+        if (rand < dropout_rate)
+          pooled_data[image].entry[i][j] = 0;
+        else
+          pooled_data[image].entry[i][j] /= scale;
+      }
     }
   }
 }

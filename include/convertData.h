@@ -2,10 +2,9 @@
 
 using std::ios;
 
-std::optional<
-    std::variant<std::vector<std::vector<double>>, std::vector<unsigned int>>>
+std::optional<std::variant<vector<image>, vector<unsigned int>>>
 readFile(std::string path); // use auto [dmat, uvec]i
-std::vector<std::vector<double>> imageToDmat(std::ifstream &file);
+vector<image> imageToDmat(std::ifstream &file);
 std::vector<unsigned int> labelToUvec(std::ifstream &file);
 void endianSwitch(int &num);
 std::string directoryPrefix();
