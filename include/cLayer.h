@@ -6,6 +6,7 @@ public:
   vector<double> data;
   vector<vector<double>> weights;
   vector<double> activation;
+  vector<double> bias;
 
   cLayer(int num_nodes, int prev_nodes);
   void loadFromPrevious(cLayer input);

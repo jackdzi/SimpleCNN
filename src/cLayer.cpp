@@ -3,6 +3,7 @@
 cLayer::cLayer(int num_nodes, int prev_nodes)
     : size(num_nodes), data(vector<double>(size, 0)),
       activation(vector<double>(size, 0)),
+      bias(vector<double>(size, 0)),
       weights(vector<vector<double>>(prev_nodes, vector<double>(size, 0))) {
   // data[i][j] is jth input node and
   std::random_device rd;
@@ -15,6 +16,8 @@ cLayer::cLayer(int num_nodes, int prev_nodes)
       weight = d(gen);
     }
   }
+  for (auto &val: bias)
+    val = d(gen);
 }
 
 void cLayer::loadFromLayer(vector<image> pooled) {
@@ -28,7 +31,7 @@ void cLayer::loadFromLayer(vector<image> pooled) {
         }
       }
     }
-    data[node] = sum;
+    data[node] = sum + bias[node];
   }
 }
 
