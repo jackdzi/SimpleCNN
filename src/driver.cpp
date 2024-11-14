@@ -66,11 +66,14 @@ int main() {
     cout << std::endl;
   }
   Model new_model = Model(vec(28), vec(50,50,10), vec(3), vec(2)); // Model(Dim of convolution layers, dim of fully_connected layers, dim of filters, dim of pooling)
-  cout << new_model.fully_connected.connected[0].weights[0][0];
   auto probs = new_model.forwardPropagate(std::get<std::vector<std::vector<double>>>(
                 matrix.value())[1]);
-  for (int i = 0; i < 10; i++)
+  double total = 0;
+  for (int i = 0; i < 10; i++) {
     cout << round(probs[i]*1000) /1000.0<< std::endl;
+    total += round(probs[i]*1000) /1000.0;
+  }
+  cout << total;
   return 0;
   // Extreme probability values due to weights just being initialized and due to filter giving very high values
 }

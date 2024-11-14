@@ -1,18 +1,4 @@
-#define BYTE unsigned char
-#ifdef _WIN32
-#include <direct.h> // For Windows
-#define GetCurrentDir _getcwd
-#else
-#include <unistd.h> // For Unix-like systems
-#define GetCurrentDir getcwd
-#endif
-
-#include <fstream>
-#include <functional>
-#include <iostream>
-#include <optional>
-#include <variant>
-#include <vector>
+#include "./headers.h"
 
 using std::ios;
 

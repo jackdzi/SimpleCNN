@@ -32,6 +32,8 @@ std::vector<std::vector<double>> imageToDmat(std::ifstream &file) {
       matrix[i][j] = static_cast<double>(temp) / 256;
     }
   }
+  vector<image> result(images, image(rows, cols));
+
   return matrix;
 }
 

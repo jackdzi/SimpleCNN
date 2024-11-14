@@ -8,7 +8,7 @@ using std::vector;
 class cLayer {
 private:
   int size;
-public: 
+public:
   vector<double> data;
   vector<vector<double>> weights;
   vector<double> activation;
@@ -17,4 +17,4 @@ public:
   void loadFromLayer(vector<vector<double>> input, int dim_prev);
   void loadFromPrevious(cLayer input);
   int applyActivation(int application_type);
-}; 
+};
