@@ -4,17 +4,14 @@ class Layer {
 public:
   vector<vector<filter>> kernels;
   vector<filter> bias;
-  int input_size;
   int pooled_size;
-  int num_filters;
   int size;
   vector<image> data;
 
 
   vector<image> pooled_data;
   //Constructor
-  Layer(int num_kernels, int input_size, int input_depth, int pooling_size,
-             int filter_size);
+  Layer(int num_kernels, int input_size, int input_depth, int pooling_size);
   //Load data in for first layer
   void loadFromImages(const vector<double> input);
 

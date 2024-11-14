@@ -25,11 +25,14 @@ using std::vector;
 struct filter {
   vector<vector<double>> fweights;
 
-  filter(int dim, std::mt19937 gen, std::normal_distribution<> d) {
-
-    for (auto &row : fweights) {
-      for (auto &weight : row) {
-        weight = d(gen);
+  filter(int size) {
+    fweights = vector<vector<double>>(size, vector<double>(size, 0));
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::normal_distribution<> d(0, sqrt(2.0 / size));
+    for (auto &row: fweights) {
+      for (auto &col: row) {
+        col = d(gen);
       }
     }
   }

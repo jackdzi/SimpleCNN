@@ -1,20 +1,14 @@
-#include <vector>
-#include <cmath>
-#include <functional>
-#include <numeric>
-#include <random>
-using std::vector;
+#include "headers.h"
 
 class cLayer {
-private:
-  int size;
 public:
+  int size;
   vector<double> data;
   vector<vector<double>> weights;
   vector<double> activation;
 
   cLayer(int num_nodes, int prev_nodes);
-  void loadFromLayer(vector<vector<double>> input, int dim_prev);
   void loadFromPrevious(cLayer input);
+  void loadFromLayer(vector<image> pooled);
   int applyActivation(int application_type);
 };

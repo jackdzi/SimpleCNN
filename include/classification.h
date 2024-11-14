@@ -6,6 +6,5 @@ public:
   int size;
 
   Classification(vector<int> layer_sizes, int input_size);
-  vector<double> forwardPass(vector<vector<double>> input, int input_dim);
+  vector<double> forwardPass(vector<image>);
 };
-
