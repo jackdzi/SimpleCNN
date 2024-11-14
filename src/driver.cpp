@@ -28,9 +28,9 @@ int main() {
   // Model(Kernel sizes, image size before convolution, number of filters in each kernel {should match kernel size[i-1]}, hidden layer sizes of fully connected layer, pooling sizes)
   Model model = Model(vec(32,64), vec(28, 13), vec(1, 32), vec(54, 10), vec(2, 2));
 
-  vector<double> probs = model.forwardPropagate(vec(std::get<vector<image>>
+  vector<vector<double>> probs = model.forwardPropagate(vec(std::get<vector<image>>
   (matrix.value())[1053]), false);
-  for (auto prob: probs) {
+  for (auto prob: probs[0]) {
     cout << prob << std::endl;
   }
 }

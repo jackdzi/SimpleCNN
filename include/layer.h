@@ -23,7 +23,7 @@ public:
   void convolution(const vector<image> img, int kernel);
 
   // Pooling
-  void maxPool2d(bool train_mode, double dropout_rate);
+  void maxPool2d(bool training, double dropout_rate);
   // Dropout
   void applyDropout(double dropout_rate);
   // Change convolve to cross correlate - Convolve is cross correlate but the filter is flipped by 180 degrees

@@ -53,7 +53,7 @@ void Layer::convolution(const vector<image> img, int kernel) {
 }
 
 // Pooling
-void Layer::maxPool2d(bool train_mode, double dropout_rate) {
+void Layer::maxPool2d(bool training, double dropout_rate) {
   for (int image = 0; image < data.size(); image++) {
     for (int i = 0; i < pooled_size; i++) {
       for (int j = 0; j < pooled_size; j++) {
@@ -70,7 +70,7 @@ void Layer::maxPool2d(bool train_mode, double dropout_rate) {
       }
     }
   }
-  if (train_mode == true)
+  if (training == true)
     applyDropout(dropout_rate);
   return;
 }
