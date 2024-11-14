@@ -1,12 +1,9 @@
 #include "./headers.h"
 
-#define FILTER_SIZE 3
-
 class Layer {
-private:
+public:
   vector<vector<filter>> kernels;
   vector<filter> bias;
-public:
   int input_size;
   int pooled_size;
   int num_filters;

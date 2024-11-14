@@ -1,3 +1,4 @@
+#pragma once
 #define BYTE unsigned char
 #ifdef _WIN32
 #include <direct.h> // For Windows
