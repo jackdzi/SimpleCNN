@@ -51,10 +51,15 @@ int cLayer::applyActivation(int application_type) {
   if (application_type == 0)
     some_function = [](double x) { return x > 0 ? x : 0.0; };
   else if (application_type == 1) {
+    double maximum = -999999;
+    for (double num: data) {
+      if (num > maximum)
+        maximum = num;
+    }
     double denom =
         std::accumulate(data.begin(), data.end(), 0.0,
-                        [](double sum, double x) { return sum + std::exp(x); });
-    some_function = [denom](double x) { return std::exp(x) / denom; };
+                        [maximum](double sum, double x) { return sum + std::exp(x-maximum); });
+    some_function = [denom, maximum](double x) { return std::exp(x-maximum) / denom; };
   } else
     return 1;
   for (int i = 0; i < size; i++) {
