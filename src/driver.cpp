@@ -1,8 +1,6 @@
 #include "../include/convertData.h"
 #include "../include/model.h"
 
-#define vec(...) std::vector{__VA_ARGS__}
-
 int main() {
   std::string prefix = directoryPrefix();
   if (prefix.substr(prefix.size() - 6, 6) == "/build")
@@ -26,11 +24,20 @@ int main() {
   }
 
   // Model(Kernel sizes, image size before convolution, number of filters in each kernel {should match kernel size[i-1]}, hidden layer sizes of fully connected layer, pooling sizes)
-  Model model = Model(vec(32,64), vec(28, 13), vec(1, 32), vec(54, 10), vec(2, 2));
+  Model model = Model(vec(16, 32, 64), vec(28, 13, 5), vec(1, 16, 32), vec(100, 10), vec(2, 2, 1));
+  Model model1 = Model(vec(32, 64), vec(28, 13), vec(1, 32), vec(100, 10), vec(2, 2));
 
   vector<vector<double>> probs = model.forwardPropagate(vec(std::get<vector<image>>
   (matrix.value())[1053]), false);
   for (auto prob: probs[0]) {
+    cout << prob << std::endl;
+  }
+  vector<vector<double>> probs1 = model1.forwardPropagate(vec(std::get<vector<image>>  (matrix.value())[1053]), false);
+  for (auto prob: probs1[0]) {
+    cout << prob << std::endl;
+  }
+vector<vector<double>> probs2 = model1.forwardPropagate(vec(std::get<vector<image>>  (matrix.value())[1054]), false);
+  for (auto prob: probs2[0]) {
     cout << prob << std::endl;
   }
 }

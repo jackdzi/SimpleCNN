@@ -5,6 +5,7 @@ public:
   vector<vector<filter>> kernels;
   vector<filter> bias;
   int pooled_size;
+  int psize;
   int size;
   vector<image> data;
 

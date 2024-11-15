@@ -6,6 +6,7 @@ Layer::Layer(int num_kernels, int input_size, int input_depth,
   // makes n x n filter of homogenous value
   size = input_size;
   pooled_size = (input_size - 2) / pooling_size;
+  psize = pooling_size;
 
   kernels = vector<vector<filter>>(num_kernels,
                                    vector<filter>(input_depth, filter(3)));
@@ -54,15 +55,24 @@ void Layer::convolution(const vector<image> img, int kernel) {
 
 // Pooling
 void Layer::maxPool2d(bool training, double dropout_rate) {
+  if (psize == 1) {
+    for (int image = 0; image < data.size(); image++) {
+      for (int i = 0; i < pooled_size; i++) {
+        for (int j = 0; j < pooled_size; j++) {
+          pooled_data[image].entry[i][j] = data[image].entry[i][j];
+        }
+      }
+    }
+  }
   for (int image = 0; image < data.size(); image++) {
     for (int i = 0; i < pooled_size; i++) {
       for (int j = 0; j < pooled_size; j++) {
         double max = -99999.0;
 
-        for (int k = 0; k < 2; k++) {
-          for (int w = 0; w < 2; w++) {
-            if (data[image].entry[i * 2 + k][j * 2 + w] > max) {
-              max = data[image].entry[i * 2 + k][j * 2 + w];
+        for (int k = 0; k < psize; k++) {
+          for (int w = 0; w < psize; w++) {
+            if (data[image].entry[i * psize + k][j * psize + w] > max) {
+              max = data[image].entry[i * psize + k][j * psize + w];
             }
           }
         }

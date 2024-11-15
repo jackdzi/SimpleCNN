@@ -10,9 +10,9 @@ Model::Model(vector<int> kernel_sizes, vector<int> input_sizes,
                                      pooling_size[pooling_size.size() - 1],
                                  2)))) {
   num_layers = kernel_sizes.size();
-  for (int i = 0; i < num_layers; i++) {
+  for (int layer = 0; layer < num_layers; layer++) {
     layers.push_back(
-        Layer(kernel_sizes[i], input_sizes[i], filters[i], pooling_size[i]));
+        Layer(kernel_sizes[layer], input_sizes[layer], filters[layer], pooling_size[layer]));
   };
 }
 
@@ -31,17 +31,14 @@ vector<int> Model::selectRandomIndices(int batch_size, int data_size) {
 
 vector<vector<double>> Model::forwardPropagate(vector<image> input,
                                                bool training) {
-  auto probabilities = vector<vector<double>>(input.size(), vector<double>(10, 0));
+  vector<vector<double>> probabilities;
   for (int img = 0; img < input.size(); img++) {
     for (int i = 0; i < num_layers; i++) {
       for (int kernel = 0; kernel < layers[i].kernels.size(); kernel++) {
-        if (i == 0) {
-          vector<image> input_image;
-          input_image.push_back(input[img]);
-          layers[i].correlate(input_image, kernel);
-        } else {
+        if (i == 0)
+          layers[i].correlate(vec(input[img]), kernel);
+        else
           layers[i].correlate(layers[i - 1].pooled_data, kernel);
-        }
       }
       layers[i].maxPool2d(training, 0.01);
     }
@@ -51,6 +48,9 @@ vector<vector<double>> Model::forwardPropagate(vector<image> input,
 }
 
 void Model::backwardPropagate(vector<image> training, double learn) {
+  vector<double> final_errors(training.size());
+
+
 }
 
 void Model::trainModel(double learn, int batch_size, int epoches,

@@ -21,15 +21,3 @@ vector<double> Classification::forwardPass(vector<image> input) {
   }
   return connected[size - 1].activation;
 }
-
-// This is wrong
-// void Classification::backwardPass(vector<vector<image>> testing,
-//                                   double learn_rate) {
-//   vector<double> error = vector<double>(10, 0);
-//   for (int image = 0; image < testing.size(); image++) {
-//     forwardPass(testing[image])
-//     for (int i = 0; i < 10; i++)
-//       error[image] = pow(targets[image][i] - connected[size - 1].activation[i], 2) / 2;
-//   }
-//   vector<vector<double>> delta;
-// }

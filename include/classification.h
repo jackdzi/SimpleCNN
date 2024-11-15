@@ -7,5 +7,4 @@ public:
 
   Classification(vector<int> layer_sizes, int input_size);
   vector<double> forwardPass(vector<image>);
-  void backwardPass(vector<vector<image>> testing, double learn_rate);
 };

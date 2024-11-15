@@ -22,6 +22,8 @@ using std::vector;
 
 #define BYTE unsigned char
 
+#define vec(...) std::vector{__VA_ARGS__}
+
 struct filter {
   vector<vector<double>> fweights;
 
