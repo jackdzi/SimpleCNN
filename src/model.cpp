@@ -11,8 +11,8 @@ Model::Model(vector<int> kernel_sizes, vector<int> input_sizes,
                                  2)))) {
   num_layers = kernel_sizes.size();
   for (int layer = 0; layer < num_layers; layer++) {
-    layers.push_back(
-        Layer(kernel_sizes[layer], input_sizes[layer], filters[layer], pooling_size[layer]));
+    layers.push_back(Layer(kernel_sizes[layer], input_sizes[layer],
+                           filters[layer], pooling_size[layer]));
   };
 }
 
@@ -42,7 +42,8 @@ vector<vector<double>> Model::forwardPropagate(vector<image> input,
       }
       layers[i].maxPool2d(training, 0.01);
     }
-    probabilities.push_back(fully_connected.forwardPass(layers[layers.size() - 1].pooled_data));
+    probabilities.push_back(
+        fully_connected.forwardPass(layers[layers.size() - 1].pooled_data));
   }
   return probabilities;
 }
@@ -60,7 +61,6 @@ void Model::backwardPropagate(vector<image> training, vector<double> labels,
 
   for (int prob = 0; prob < 10; prob++)
     final_errors[prob] /= training.size();
-
 
   vector<vector<double>> deltas;
   deltas.push_back(final_errors);
@@ -127,14 +127,17 @@ void Model::backwardPropagate(vector<image> training, vector<double> labels,
 }
 
 void Model::trainModel(double learn, int batch_size, int epoches,
-                       const vector<image> training) {
+                       const vector<image> training, vector<double> labels) {
   for (int epoch = 0; epoch < epoches; epoch++) {
     if (epoch % 15 == 0 && epoch != 0)
       learn = learn * 0.9;
     vector<image> batch;
+    vector<double> batch_labels;
     auto indicies = selectRandomIndices(batch_size, training.size());
-    for (int i = 0; i < batch_size; i++)
+    for (int i = 0; i < batch_size; i++) {
       batch.push_back(training[indicies[i]]);
-    backwardPropagate(batch, learn);
+      batch_labels.push_back(labels[indicies[i]]);
+    }
+    backwardPropagate(batch, batch_labels, learn);
   }
 }

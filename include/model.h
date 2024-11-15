@@ -11,5 +11,5 @@ public:
   vector<vector<double>> forwardPropagate(vector<image> input, bool training);
   vector<int> selectRandomIndices(int batch_size, int data_size);
   void backwardPropagate(vector<image> training, vector<double> labels, double learn);
-  void trainModel(double learn, int batch_size, int epoches, const vector<image> training);
+  void trainModel(double learn, int batch_size, int epoches, const vector<image> training, vector<double> labels);
 };
