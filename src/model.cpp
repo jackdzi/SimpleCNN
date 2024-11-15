@@ -48,7 +48,6 @@ vector<vector<double>> Model::forwardPropagate(vector<image> input,
   return probabilities;
 }
 
-
 void Model::backwardPropagate(vector<image> training, vector<double> labels,
                               double learn) {
   vector<double> final_errors(10, 0.0);
@@ -62,7 +61,6 @@ void Model::backwardPropagate(vector<image> training, vector<double> labels,
 
   for (int prob = 0; prob < 10; prob++)
     final_errors[prob] /= training.size();
-
 
   vector<vector<double>> deltas;
   deltas.push_back(final_errors);
