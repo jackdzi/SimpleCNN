@@ -48,6 +48,7 @@ vector<vector<double>> Model::forwardPropagate(vector<image> input,
   return probabilities;
 }
 
+
 void Model::backwardPropagate(vector<image> training, vector<double> labels,
                               double learn) {
   vector<double> final_errors(10, 0.0);
@@ -62,13 +63,19 @@ void Model::backwardPropagate(vector<image> training, vector<double> labels,
   for (int prob = 0; prob < 10; prob++)
     final_errors[prob] /= training.size();
 
+
   vector<vector<double>> deltas;
   deltas.push_back(final_errors);
+  
   for (int clayer = fully_connected.size - 2; clayer >= 0; clayer--) {
-    vector<double> node_deltas(fully_connected.connected[clayer].size, 0.0);
-    for (int node = 0; node < fully_connected.connected[clayer].size; node++) {
+
+    int current_layer_size = fully_connected.connected[clayer].size;
+    int next_layer_size = fully_connected.connected[clayer + 1].size;
+    vector<double> node_deltas(current_layer_size, 0.0);
+    
+    for (int node = 0; node < current_layer_size; node++) {
       for (int prev_node = 0;
-           prev_node < fully_connected.connected[clayer + 1].size;
+           prev_node < next_layer_size;
            prev_node++) {
         node_deltas[node] +=
             deltas[0][prev_node] *
@@ -80,32 +87,43 @@ void Model::backwardPropagate(vector<image> training, vector<double> labels,
     }
     deltas.insert(deltas.begin(), node_deltas);
   }
+  // For each layer, go over every batch in image
   for (int clayer = 0; clayer < fully_connected.size; clayer++) {
     for (int img = 0; img < training.size(); img++) {
-      if (clayer == 0) {
-        for (int img_i = 0; img_i < training[img].entry.size(); img_i++) {
-          for (int img_j = 0; img_j < training[img].entry[img_i].size(); img_j++) {
-            fully_connected.connected[clayer].weights[][] =
-          }
 
-          pooled[image].entry.size(); i++) {
-            for (int j = 0; j < pooled[image].entry[i].size(); j++) {
-              sum += pooled[image].entry[i][j] *
-                     weights[image * pooled[image].entry.size() *
-                                 pooled[image].entry[i].size() +
-                             i * pooled[image].entry.size() + j][node];
+      const vector<double> current_deltas = deltas[clayer + 1];
+      vector<double> prev_activations;
+
+      // If first layer, use pooled data from final convo layer and load into prev_activations
+      if (clayer == 0) {
+        for (auto& pooled_image : layers[clayer].pooled_data) {
+          for (auto& row : pooled_image.entry) {
+            for (auto& val : row) {
+              prev_activations.push_back(val);
             }
           }
         }
-
-        for ()
-          for (int node = 0; node < fully_connected.connected[clayer].size;
-               node++) {
-          }
-        else {
-          for (int node =)
-        }
+      // Otherwise, just load the data from the previous layer
+      } else {
+        vector<double> prev_layer_data = fully_connected.connected[clayer - 1].data;
+        prev_activations = prev_layer_data;
       }
+      // Now update the weights and biases for this layer
+      int layer_size = fully_connected.connected[clayer].size;
+      // For every node in this layer, iterate through every previoud node and adjust 
+      // the weights based on activations and deltas
+      for (int node = 0 ; node < layer_size; node++) {
+        for (int prev_node = 0; prev_node < prev_activations.size(); prev_node++) {
+          double grad = current_deltas[node] * prev_activations[prev_node];
+          fully_connected.connected[clayer].weights[node][prev_node] -= learn * grad;
+        }
+
+      // Do the same for the bias
+        double bias_grad = current_deltas[node];
+        fully_connected.connected[clayer].bias[node] -= learn * bias_grad;
+      }
+
+      
     }
   }
 }
