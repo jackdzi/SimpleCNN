@@ -58,13 +58,14 @@ void Model::backwardPropagate(vector<image> training, vector<double> labels,
       final_errors[prob] += probabilities[img][prob] - target;
     }
   }
+
   for (int prob = 0; prob < 10; prob++)
     final_errors[prob] /= training.size();
 
   vector<vector<double>> deltas;
   deltas.push_back(final_errors);
-  for (int clayer = fully_connected.size - 1; clayer >= 0; clayer--) {
-    vector<double> node_deltas;
+  for (int clayer = fully_connected.size - 2; clayer >= 0; clayer--) {
+    vector<double> node_deltas(fully_connected.connected[clayer].size, 0.0);
     for (int node = 0; node < fully_connected.connected[clayer].size; node++) {
       for (int prev_node = 0;
            prev_node < fully_connected.connected[clayer + 1].size;
@@ -73,10 +74,39 @@ void Model::backwardPropagate(vector<image> training, vector<double> labels,
             deltas[0][prev_node] *
             fully_connected.connected[clayer + 1].weights[node][prev_node];
       }
-      int activation_derivative = fully_connected.connected[clayer].data[node] > 0 ? 1 : 0;
+      int activation_derivative =
+          fully_connected.connected[clayer].data[node] > 0 ? 1 : 0;
       node_deltas[node] *= activation_derivative;
     }
     deltas.insert(deltas.begin(), node_deltas);
+  }
+  for (int clayer = 0; clayer < fully_connected.size; clayer++) {
+    for (int img = 0; img < training.size(); img++) {
+      if (clayer == 0) {
+        for (int img_i = 0; img_i < training[img].entry.size(); img_i++) {
+          for (int img_j = 0; img_j < training[img].entry[img_i].size(); img_j++) {
+            fully_connected.connected[clayer].weights[][] =
+          }
+
+          pooled[image].entry.size(); i++) {
+            for (int j = 0; j < pooled[image].entry[i].size(); j++) {
+              sum += pooled[image].entry[i][j] *
+                     weights[image * pooled[image].entry.size() *
+                                 pooled[image].entry[i].size() +
+                             i * pooled[image].entry.size() + j][node];
+            }
+          }
+        }
+
+        for ()
+          for (int node = 0; node < fully_connected.connected[clayer].size;
+               node++) {
+          }
+        else {
+          for (int node =)
+        }
+      }
+    }
   }
 }
 
