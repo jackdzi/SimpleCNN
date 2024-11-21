@@ -24,10 +24,10 @@ void cLayer::loadFromLayer(vector<image> pooled) {
   for (int node = 0; node < size; node++) {
     double sum = 0;
 
-    for (int image = 0; image < pooled.size(); image++) {
-      for (int i = 0; i < pooled[image].entry.size(); i++) {
-        for (int j = 0; j < pooled[image].entry[i].size(); j++) {
-          sum += pooled[image].entry[i][j] * weights[image * pooled[image].entry.size() * pooled[image].entry[i].size() + i * pooled[image].entry.size() + j][node];
+    for (int img = 0; img < pooled.size(); img++) {
+      for (int i = 0; i < pooled[img].entry.size(); i++) {
+        for (int j = 0; j < pooled[img].entry[i].size(); j++) {
+          sum += pooled[img].entry[i][j] * weights[img * pooled[img].entry.size() * pooled[img].entry[i].size() + i * pooled[img].entry.size() + j][node];
         }
       }
     }

@@ -48,7 +48,6 @@ vector<vector<double>> Model::forwardPropagate(vector<image> input,
   return probabilities;
 }
 
-
 void Model::backwardPropagate(vector<image> training, vector<double> labels,
                               double learn) {
   vector<double> final_errors(10, 0.0);
@@ -63,20 +62,17 @@ void Model::backwardPropagate(vector<image> training, vector<double> labels,
   for (int prob = 0; prob < 10; prob++)
     final_errors[prob] /= training.size();
 
-
   vector<vector<double>> deltas;
   deltas.push_back(final_errors);
-  
+
   for (int clayer = fully_connected.size - 2; clayer >= 0; clayer--) {
 
     int current_layer_size = fully_connected.connected[clayer].size;
     int next_layer_size = fully_connected.connected[clayer + 1].size;
     vector<double> node_deltas(current_layer_size, 0.0);
-    
+
     for (int node = 0; node < current_layer_size; node++) {
-      for (int prev_node = 0;
-           prev_node < next_layer_size;
-           prev_node++) {
+      for (int prev_node = 0; prev_node < next_layer_size; prev_node++) {
         node_deltas[node] +=
             deltas[0][prev_node] *
             fully_connected.connected[clayer + 1].weights[node][prev_node];
@@ -91,39 +87,46 @@ void Model::backwardPropagate(vector<image> training, vector<double> labels,
   for (int clayer = 0; clayer < fully_connected.size; clayer++) {
     for (int img = 0; img < training.size(); img++) {
 
-      const vector<double> current_deltas = deltas[clayer + 1];
-      vector<double> prev_activations;
+      const vector<double> current_deltas = deltas[clayer];
 
-      // If first layer, use pooled data from final convo layer and load into prev_activations
+      // If first layer, use pooled data from final convo layer and load into
+      // prev_activations
       if (clayer == 0) {
-        for (auto& pooled_image : layers[clayer].pooled_data) {
-          for (auto& row : pooled_image.entry) {
-            for (auto& val : row) {
-              prev_activations.push_back(val);
+        for (int node = 0; node < fully_connected.connected[clayer].size;
+             node++) {
+          for (int img = 0; img < training.size(); img++) {
+            for (int i = 0; i < training[img].entry.size(); i++) {
+              for (int j = 0; j < training[img].entry[i].size(); j++) {
+                int prev_node_index = img * training[img].entry.size() *
+                                          training[img].entry[i].size() +
+                                      i * training[img].entry.size() + j;
+                fully_connected.connected[clayer]
+                    .weights[prev_node_index][node] -=
+                    fully_connected.connected[clayer]
+                        .weights[prev_node_index][node] *
+                    deltas[clayer][node] * learn;
+              }
             }
           }
         }
-      // Otherwise, just load the data from the previous layer
-      } else {
-        vector<double> prev_layer_data = fully_connected.connected[clayer - 1].data;
-        prev_activations = prev_layer_data;
-      }
-      // Now update the weights and biases for this layer
-      int layer_size = fully_connected.connected[clayer].size;
-      // For every node in this layer, iterate through every previoud node and adjust 
-      // the weights based on activations and deltas
-      for (int node = 0 ; node < layer_size; node++) {
-        for (int prev_node = 0; prev_node < prev_activations.size(); prev_node++) {
-          double grad = current_deltas[node] * prev_activations[prev_node];
-          fully_connected.connected[clayer].weights[node][prev_node] -= learn * grad;
+        // Otherwise, just load the data from the previous layer
+      } else { // Now update the weights and biases for this layer
+        int layer_size = fully_connected.connected[clayer].size;
+        // For every node in this layer, iterate through every previoud node and
+        // adjust the weights based on activations and deltas
+        cLayer *prev_layer = &fully_connected.connected[clayer-1];
+        for (int node = 0; node < layer_size; node++) {
+          for (int prev_node = 0; prev_node < prev_layer->activation.size(); prev_node++) {
+            double grad = current_deltas[node] * prev_layer->activation[prev_node];
+            fully_connected.connected[clayer].weights[prev_node][node] -=
+                learn * grad;
+          }
+
+          // Do the same for the bias
+          double bias_grad = current_deltas[node];
+          fully_connected.connected[clayer].bias[node] -= learn * bias_grad;
         }
-
-      // Do the same for the bias
-        double bias_grad = current_deltas[node];
-        fully_connected.connected[clayer].bias[node] -= learn * bias_grad;
       }
-
-      
     }
   }
 }
