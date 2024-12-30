@@ -3,7 +3,7 @@ import React, { useRef, useState, useEffect, useCallback } from 'react';
 const Canvas: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [pixelData, setPixelData] = useState<number[][]>(
-    Array.from({ length: 280 }, () => Array(280).fill(0))
+    Array.from({ length: 28 }, () => Array(28).fill(0))
   );
   const [numberData, setNumberData] = useState<number[][]>(
     Array.from({ length: 28 }, () => Array(28).fill(0))
@@ -31,7 +31,7 @@ const Canvas: React.FC = () => {
 
       setPixelData(prevPixelData => {
         const newPixelData = [...prevPixelData];
-        newPixelData[Math.floor(y / 10)][Math.floor(x / 10)] = 1;
+        newPixelData[Math.floor(y / 10)][Math.floor(x / 10)] = 1; //TODO: Fix this, make it the whole 10 by 10 area, (don't use floor)
         return newPixelData;
       });
     }
@@ -42,15 +42,16 @@ const Canvas: React.FC = () => {
       const newNumberData = Array.from({ length: 28 }, (_, rowIndex) =>
         Array.from({ length: 28 }, (_, colIndex) => {
           let sum = 0;
-          for (let i = 0; i < 10; i++) {
-            for (let j = 0; j < 10; j++) {
-              sum += pixelData[rowIndex * 10 + i][colIndex * 10 + j];
+          for (let i = rowIndex * 10; i < (rowIndex + 1) * 10; i++) {
+            for (let j = colIndex * 10; j < (colIndex + 1) * 10; j++) {
+              sum += pixelData[i][j];
             }
           }
-          return Math.round(sum / 100);
+          return sum;
         })
       );
       console.log(newNumberData);
+      console.log(pixelData)
       return newNumberData;
     });
   }, [pixelData]);
