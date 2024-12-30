@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 
 const Canvas: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -22,35 +22,38 @@ const Canvas: React.FC = () => {
     }
   }, []);
 
-  const drawPixel = (x: number, y: number) => {
+  const drawPixel = useCallback((x: number, y: number) => {
     const context = canvasRef.current?.getContext('2d');
 
     if (context) {
       context.fillStyle = 'black';
       context.fillRect(x, y, 10, 10);
 
-      const newPixelData = [...pixelData];
-      newPixelData[Math.floor(y / 10)][Math.floor(x / 10)] = 1;
-      setPixelData(newPixelData);
-      updateNumberData(newPixelData);
+      setPixelData(prevPixelData => {
+        const newPixelData = [...prevPixelData];
+        newPixelData[Math.floor(y / 10)][Math.floor(x / 10)] = 1;
+        return newPixelData;
+      });
     }
-  };
+  }, []);
 
-  const updateNumberData = (data: number[][]) => {
-    const newNumberData = Array.from({ length: 28 }, (_, rowIndex) =>
-      Array.from({ length: 28 }, (_, colIndex) => {
-        let sum = 0;
-        for (let i = 0; i < 10; i++) {
-          for (let j = 0; j < 10; j++) {
-            sum += data[rowIndex * 10 + i][colIndex * 10 + j];
+  const updateNumberData = useCallback(() => {
+    setNumberData(() => {
+      const newNumberData = Array.from({ length: 28 }, (_, rowIndex) =>
+        Array.from({ length: 28 }, (_, colIndex) => {
+          let sum = 0;
+          for (let i = 0; i < 10; i++) {
+            for (let j = 0; j < 10; j++) {
+              sum += pixelData[rowIndex * 10 + i][colIndex * 10 + j];
+            }
           }
-        }
-        return Math.round(sum / 100);
-      })
-    );
-    console.log(newNumberData)
-    setNumberData(newNumberData);
-  };
+          return Math.round(sum / 100);
+        })
+      );
+      console.log(newNumberData);
+      return newNumberData;
+    });
+  }, [pixelData]);
 
   const handleMouseDown = (event: React.MouseEvent) => {
     const rect = canvasRef.current?.getBoundingClientRect();
@@ -63,17 +66,26 @@ const Canvas: React.FC = () => {
   };
 
   const handleMouseMove = (event: React.MouseEvent) => {
-    if (!isDrawing) return;
-    const rect = canvasRef.current?.getBoundingClientRect();
-    if (rect) {
-      const x = Math.floor(event.clientX - rect.left);
-      const y = Math.floor(event.clientY - rect.top);
-      drawPixel(x, y);
+    if (isDrawing) {
+      const rect = canvasRef.current?.getBoundingClientRect();
+      if (rect) {
+        const x = Math.floor(event.clientX - rect.left);
+        const y = Math.floor(event.clientY - rect.top);
+        drawPixel(x, y);
+      }
     }
   };
 
   const handleMouseUp = () => {
     setIsDrawing(false);
+    updateNumberData();
+  };
+
+  const handleMouseOut = () => {
+    if (isDrawing) {
+      setIsDrawing(false);
+      updateNumberData();
+    }
   };
 
   return (
@@ -83,7 +95,7 @@ const Canvas: React.FC = () => {
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseUp}
+      onMouseLeave={handleMouseOut}
     />
   );
 };
