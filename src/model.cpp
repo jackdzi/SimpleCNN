@@ -6,7 +6,7 @@ Model::Model(vector<int> kernel_sizes, vector<int> input_sizes,
              vector<int> pooling_size)
     : fully_connected(Classification(
           cLayer_sizes, kernel_sizes[kernel_sizes.size() - 1] *
-                            (pow((input_sizes[input_sizes.size() - 1] - 2) /
+                            (pow(double((input_sizes[input_sizes.size() - 1] - 2)) / //TODO: Check if this is correct
                                      pooling_size[pooling_size.size() - 1],
                                  2)))) {
   num_layers = kernel_sizes.size();
@@ -55,7 +55,7 @@ void Model::backwardPropagate(vector<image> training, vector<double> labels,
   for (int img = 0; img < training.size(); img++) {
     for (int prob = 0; prob < 10; prob++) {
       int target = prob == labels[img] ? 1 : 0;
-      final_errors[prob] += probabilities[img][prob] - target;
+      final_errors[prob] -= log(probabilities[img][prob] + 1e-15) * target;
     }
   }
 
@@ -72,10 +72,10 @@ void Model::backwardPropagate(vector<image> training, vector<double> labels,
     vector<double> node_deltas(current_layer_size, 0.0);
 
     for (int node = 0; node < current_layer_size; node++) {
-      for (int prev_node = 0; prev_node < next_layer_size; prev_node++) {
+      for (int next_node = 0; next_node < next_layer_size; next_node++) {
         node_deltas[node] +=
-            deltas[0][prev_node] *
-            fully_connected.connected[clayer + 1].weights[node][prev_node];
+            deltas[0][next_node] *
+            fully_connected.connected[clayer + 1].weights[node][next_node];
       }
       int activation_derivative =
           fully_connected.connected[clayer].data[node] > 0 ? 1 : 0;
@@ -83,9 +83,18 @@ void Model::backwardPropagate(vector<image> training, vector<double> labels,
     }
     deltas.insert(deltas.begin(), node_deltas);
   }
+  // First index is what layer, second index is what kernel, third is what
+  // filter Initializes the vector to the last layer, with deltas for each
+  // filter all equal to 0
+  vector<vector<vector<image>>> conv_deltas(
+      1, vector<vector<image>>(
+             layers[num_layers - 1].kernels.size(),
+             vector<image>(layers[num_layers - 1].kernels[0].size(),
+                           image(3, 3))));
+
   // For each layer, go over every batch in image
-  for (int clayer = 0; clayer < fully_connected.size; clayer++) {
-    for (int img = 0; img < training.size(); img++) {
+  for (int img = 0; img < training.size(); img++) {
+    for (int clayer = 0; clayer < fully_connected.size; clayer++) {
 
       const vector<double> current_deltas = deltas[clayer];
 
@@ -114,10 +123,12 @@ void Model::backwardPropagate(vector<image> training, vector<double> labels,
         int layer_size = fully_connected.connected[clayer].size;
         // For every node in this layer, iterate through every previoud node and
         // adjust the weights based on activations and deltas
-        cLayer *prev_layer = &fully_connected.connected[clayer-1];
+        cLayer *prev_layer = &fully_connected.connected[clayer - 1];
         for (int node = 0; node < layer_size; node++) {
-          for (int prev_node = 0; prev_node < prev_layer->activation.size(); prev_node++) {
-            double grad = current_deltas[node] * prev_layer->activation[prev_node];
+          for (int prev_node = 0; prev_node < prev_layer->activation.size();
+               prev_node++) {
+            double grad =
+                current_deltas[node] * prev_layer->activation[prev_node];
             fully_connected.connected[clayer].weights[prev_node][node] -=
                 learn * grad;
           }
@@ -129,6 +140,8 @@ void Model::backwardPropagate(vector<image> training, vector<double> labels,
       }
     }
   }
+
+  // If pool_size = 1, set all pooled_deltas to 1
 }
 
 void Model::trainModel(double learn, int batch_size, int epoches,

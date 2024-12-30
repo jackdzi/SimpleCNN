@@ -12,7 +12,13 @@ Layer::Layer(int num_kernels, int input_size, int input_depth,
                                    vector<filter>(input_depth, filter(3)));
   data = vector<image>(num_kernels, image(size - 2, size - 2));
   pooled_data = vector<image>(num_kernels, image(pooled_size, pooled_size));
-  bias = vector<filter>(num_kernels, filter(size));
+  bias = vector<double>(num_kernels);
+  pooled_deltas = vector<image>(num_kernels, image(2, 2));
+  std::random_device rd;
+  std::mt19937 gen(rd());
+  std::normal_distribution<> d(0, sqrt(2.0 / size));
+  for (auto &val: bias)
+       val = d(gen);
 };
 
 // Convolution
@@ -28,7 +34,7 @@ void Layer::correlate(const vector<image> img, int kernel) {
           }
         }
       }
-      data[kernel].entry[i - 1][j - 1] += bias[kernel].fweights[i - 1][i - 1];
+      data[kernel].entry[i - 1][j - 1] += bias[kernel];
     }
   }
   return;
@@ -47,7 +53,7 @@ void Layer::convolution(const vector<image> img, int kernel) {
           }
         }
       }
-      data[kernel].entry[i - 1][j - 1] += bias[kernel].fweights[i - 1][i - 1];
+      data[kernel].entry[i - 1][j - 1] += bias[kernel];
     }
   }
   return;
@@ -68,15 +74,19 @@ void Layer::maxPool2d(bool training, double dropout_rate) {
     for (int i = 0; i < pooled_size; i++) {
       for (int j = 0; j < pooled_size; j++) {
         double max = -99999.0;
-
+        int idx_i = 0;
+        int idx_j = 0;
         for (int k = 0; k < psize; k++) {
           for (int w = 0; w < psize; w++) {
             if (data[image].entry[i * psize + k][j * psize + w] > max) {
               max = data[image].entry[i * psize + k][j * psize + w];
+              idx_i = k;
+              idx_j = w;
             }
           }
         }
         pooled_data[image].entry[i][j] = max;
+        pooled_deltas[image].entry[idx_i][idx_j] = 0;
       }
     }
   }

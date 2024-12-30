@@ -3,7 +3,8 @@
 class Layer {
 public:
   vector<vector<filter>> kernels;
-  vector<filter> bias;
+  vector<double> bias;
+  vector<image> pooled_deltas;
   int pooled_size;
   int psize;
   int size;
