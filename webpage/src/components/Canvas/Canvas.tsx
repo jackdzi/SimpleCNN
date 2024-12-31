@@ -1,103 +1,51 @@
-import React, { useRef, useState, useEffect, useCallback } from 'react';
+import { useRef } from "react";
+import { ReactSketchCanvas } from "react-sketch-canvas";
+import { useVectorContext } from "../../assets/imageData";
 
 const Canvas: React.FC = () => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [pixelData, setPixelData] = useState<number[][]>(
-    Array.from({ length: 28 }, () => Array(28).fill(0))
-  );
-  const [numberData, setNumberData] = useState<number[][]>(
-    Array.from({ length: 28 }, () => Array(28).fill(0))
-  );
-  const [isDrawing, setIsDrawing] = useState(false);
+  const canvasRef = useRef(null);
+  const { setVectorData } = useVectorContext();
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const context = canvas?.getContext('2d');
+  const handleUpdate = async (data: string) => {
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    setVectorData(data);
+  };
 
-    if (canvas && context) {
-      canvas.width = 280;
-      canvas.height = 280;
-      context.fillStyle = 'white';
-      context.fillRect(0, 0, canvas.width, canvas.height);
-    }
-  }, []);
-
-  const drawPixel = useCallback((x: number, y: number) => {
-    const context = canvasRef.current?.getContext('2d');
-
-    if (context) {
-      context.fillStyle = 'black';
-      context.fillRect(x, y, 10, 10);
-
-      setPixelData(prevPixelData => {
-        const newPixelData = [...prevPixelData];
-        newPixelData[Math.floor(y / 10)][Math.floor(x / 10)] = 1; //TODO: Fix this, make it the whole 10 by 10 area, (don't use floor)
-        return newPixelData;
+  const handleMouseUp = async () => {
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    (canvasRef.current as any)
+      .exportImage("png")
+      .then((data: string) => {
+        handleUpdate(data);
+      })
+      .catch((e: any) => {
+        console.log(e);
       });
-    }
-  }, []);
-
-  const updateNumberData = useCallback(() => {
-    setNumberData(() => {
-      const newNumberData = Array.from({ length: 28 }, (_, rowIndex) =>
-        Array.from({ length: 28 }, (_, colIndex) => {
-          let sum = 0;
-          for (let i = rowIndex * 10; i < (rowIndex + 1) * 10; i++) {
-            for (let j = colIndex * 10; j < (colIndex + 1) * 10; j++) {
-              sum += pixelData[i][j];
-            }
-          }
-          return sum;
-        })
-      );
-      console.log(newNumberData);
-      console.log(pixelData)
-      return newNumberData;
-    });
-  }, [pixelData]);
-
-  const handleMouseDown = (event: React.MouseEvent) => {
-    const rect = canvasRef.current?.getBoundingClientRect();
-    if (rect) {
-      const x = Math.floor(event.clientX - rect.left);
-      const y = Math.floor(event.clientY - rect.top);
-      drawPixel(x, y);
-      setIsDrawing(true);
-    }
   };
 
-  const handleMouseMove = (event: React.MouseEvent) => {
-    if (isDrawing) {
-      const rect = canvasRef.current?.getBoundingClientRect();
-      if (rect) {
-        const x = Math.floor(event.clientX - rect.left);
-        const y = Math.floor(event.clientY - rect.top);
-        drawPixel(x, y);
-      }
-    }
-  };
-
-  const handleMouseUp = () => {
-    setIsDrawing(false);
-    updateNumberData();
-  };
-
-  const handleMouseOut = () => {
-    if (isDrawing) {
-      setIsDrawing(false);
-      updateNumberData();
-    }
+  const handleClear = () => {
+    (canvasRef.current as any).clearCanvas();
   };
 
   return (
-    <canvas
-      ref={canvasRef}
-      style={{ border: '1px solid black' }}
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseOut}
-    />
+    <div className="flex flex-col items-center p-10" onMouseUp={handleMouseUp}>
+      <ReactSketchCanvas
+        ref={canvasRef}
+        style={{ border: "4px solid #63b3ed", width: 280, height: 280 }}
+        strokeWidth={20}
+        strokeColor="black"
+      />
+      <button
+        className="mt-5 bg-gradient-to-r from-green-400 to-blue-500 hover:from-blue-500 hover:to-green-400 text-white font-bold py-2 px-4 rounded shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+        onClick={async () => {
+          handleClear();
+          await new Promise((resolve) => setTimeout(resolve, 0));
+          handleMouseUp();
+        }}
+      >
+        Clear Canvas
+      </button>
+    </div>
   );
 };
 
