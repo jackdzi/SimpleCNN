@@ -13,7 +13,6 @@ Layer::Layer(int num_kernels, int input_size, int input_depth,
   data = vector<image>(num_kernels, image(size - 2, size - 2));
   pooled_data = vector<image>(num_kernels, image(pooled_size, pooled_size));
   bias = vector<double>(num_kernels);
-  pooled_deltas = vector<image>(num_kernels, image(2, 2));
   std::random_device rd;
   std::mt19937 gen(rd());
   std::normal_distribution<> d(0, sqrt(2.0 / size));
@@ -86,7 +85,6 @@ void Layer::maxPool2d(bool training, double dropout_rate) {
           }
         }
         pooled_data[image].entry[i][j] = max;
-        pooled_deltas[image].entry[idx_i][idx_j] = 0;
       }
     }
   }

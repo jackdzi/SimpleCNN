@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useVectorContext } from "../../assets/imageData";
 
 const CppLink: React.FC = () => {
@@ -35,15 +35,15 @@ const CppLink: React.FC = () => {
       </button>
       <div className="mx-auto">
         <h1 className="text-2xl font-bold text-white m-4">Output:</h1>
-        <div className="grid place-items-center gap-0.5 grid-cols-[repeat(28,_min-content)] grid-rows-[repeat(28,_min-content)] ">
+        <div className="grid place-items-center gap-0.5 grid-cols-[repeat(28,_min-content)] grid-rows-[repeat(28,_min-content)]">
           {output.substring(31, output.length).split("\n").map((row, indexrow) =>
             row.split(" ").map((value, index) => (
               <div
                 key={index + indexrow * 28}
                 style={{
                   backgroundColor: `rgb(${value}, ${value}, ${value})`,
-                  width: "1em",
-                  height: "1em",
+                  width: "0.75em",
+                  height: "0.75em",
                 }}
               ></div>
             )),

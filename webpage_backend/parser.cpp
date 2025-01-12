@@ -35,7 +35,7 @@ vector<unsigned char> base64_decode(const string &encoded_string) {
           ((char_array_4[1] & 0xf) << 4) + ((char_array_4[2] & 0x3c) >> 2);
       char_array_3[2] = ((char_array_4[2] & 0x3) << 6) + char_array_4[3];
 
-      for (i = 0; i < 3; i++)
+    for (i = 0; i < 3; i++)
         ret.push_back(char_array_3[i]);
       i = 0;
     }
@@ -131,7 +131,7 @@ int main() {
   try {
     auto data = readPNGToGrayscale("data.png");
     for (const auto &row : data) {
-      for (auto it = row.begin(); it != row.end(); ++it) {
+      for (auto it = row.begin(); it != row.end(); it++) {
         if (it != row.begin())
           cout << " ";
         cout << *it;

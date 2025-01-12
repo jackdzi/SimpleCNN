@@ -1,5 +1,4 @@
 const express = require("express");
-const fs = require("fs");
 const { exec } = require("child_process");
 
 const app = express();
@@ -8,7 +7,6 @@ app.use(express.json());
 
 app.post("/run", (req, res) => {
   const input = req.body.input;
-  const input_cleaned = input.replace(/^data:image\/png;base64,/, "");
 
   const process = exec("./parser", (error, stdout, stderr) => {
     if (error) return res.status(500).send(`Error: ${error.message}`);
