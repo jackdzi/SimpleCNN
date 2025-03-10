@@ -76,7 +76,6 @@ const Canvas: React.FC = () => {
       </div>
     <div className="flex flex-col justify-center items-center">
       <div className="mx-auto">
-        <h1 className="text-2xl font-bold text-white m-4">Output:</h1>
         <div className="grid place-items-center gap-0.5 grid-cols-[repeat(28,_min-content)] grid-rows-[repeat(28,_min-content)]">
           <DataDisplay>{output}</DataDisplay>
         </div>
