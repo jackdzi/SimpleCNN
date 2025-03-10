@@ -1,12 +1,15 @@
 const express = require("express");
 const { exec } = require("child_process");
+const cors = require("cors");
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 
 app.post("/run", (req, res) => {
   const input = req.body.input;
+  console.log("Request recieved")
 
   const process = exec("./parser", (error, stdout, stderr) => {
     if (error) return res.status(500).send(`Error: ${error.message}`);

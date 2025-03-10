@@ -1,5 +1,6 @@
 #include "../include/model.h"
 #include <algorithm>
+#include <iomanip>
 
 Model::Model(vector<int> kernel_sizes, vector<int> input_sizes,
              vector<int> filters, vector<int> cLayer_sizes,
@@ -52,60 +53,80 @@ vector<vector<double>> Model::forwardPropagate(vector<image> input,
 void Model::trainModel(double learn_rate, int batch_size, int epochs,
                        const vector<image> &training,
                        const vector<double> &labels) {
-  if (training.empty() || labels.empty() || training.size() != labels.size()) {
-    throw std::invalid_argument("Invalid training data or labels");
+  const double momentum = 0.9;
+
+  vector<vector<vector<filter>>> kernel_velocity;
+  vector<vector<double>> bias_velocity;
+
+  for (int i = 0; i < num_layers; i++) {
+    vector<vector<filter>> layer_kernel_velocity;
+    for (int k = 0; k < layers[i].kernels.size(); k++) {
+      vector<filter> kernel_filters;
+      for (int f = 0; f < layers[i].kernels[k].size(); f++) {
+        kernel_filters.push_back(filter(3));
+      }
+      layer_kernel_velocity.push_back(kernel_filters);
+    }
+    kernel_velocity.push_back(layer_kernel_velocity);
+    bias_velocity.push_back(vector<double>(layers[i].bias.size(), 0.0));
   }
 
   const int num_samples = training.size();
   const int steps_per_epoch = (num_samples + batch_size - 1) / batch_size;
-
   double current_learn_rate = learn_rate;
-  const double decay_rate = 0.9;
-  const int decay_steps = 15;
+
+  std::cout << "\nStarting training with learning rate: " << learn_rate
+            << std::endl;
+  std::cout << "Momentum: " << momentum << std::endl;
+  std::cout << "Batch size: " << batch_size << std::endl;
 
   for (int epoch = 0; epoch < epochs; epoch++) {
-    if (epoch > 0 && epoch % decay_steps == 0) {
-      current_learn_rate *= decay_rate;
+    // Learning rate decay
+    if (epoch > 0 && epoch % 15 == 0) {
+      current_learn_rate *= 0.9;
+      std::cout << "Learning rate decayed to: " << current_learn_rate
+                << std::endl;
     }
 
-    // Shuffle batch
+    // Shuffle indices
     vector<int> shuffled_indices(num_samples);
-    for (int i = 0; i < num_samples; i++) {
+    for (int i = 0; i < num_samples; i++)
       shuffled_indices[i] = i;
-    }
     std::random_device rd;
     std::mt19937 gen(rd());
     std::shuffle(shuffled_indices.begin(), shuffled_indices.end(), gen);
 
     double epoch_loss = 0.0;
     int correct_predictions = 0;
+    int total_predictions = 0;
 
-    // For each batch
+    // Process mini-batches
     for (int step = 0; step < steps_per_epoch; step++) {
+      // Prepare batch
       int start_idx = step * batch_size;
       int end_idx = std::min(start_idx + batch_size, num_samples);
       int current_batch_size = end_idx - start_idx;
 
-      // Allocate memory for batch
       vector<image> batch_images;
       vector<double> batch_labels;
       batch_images.reserve(current_batch_size);
       batch_labels.reserve(current_batch_size);
-      std::cout << "a" << std::endl;
 
       for (int i = start_idx; i < end_idx; i++) {
         batch_images.push_back(training[shuffled_indices[i]]);
         batch_labels.push_back(labels[shuffled_indices[i]]);
       }
 
+      // Forward pass
       auto predictions = forwardPropagate(batch_images, true);
-      std::cout << "b" << std::endl;
 
       // Compute batch loss and accuracy
       double batch_loss = 0.0;
       for (int i = 0; i < current_batch_size; i++) {
         int true_label = static_cast<int>(batch_labels[i]);
-        batch_loss -= std::log(predictions[i][true_label] + 1e-15);
+
+        // Cross-entropy loss
+        batch_loss -= log(predictions[i][true_label] + 1e-15);
 
         // Find predicted class
         int predicted_class = 0;
@@ -119,55 +140,56 @@ void Model::trainModel(double learn_rate, int batch_size, int epochs,
         if (predicted_class == true_label) {
           correct_predictions++;
         }
+        total_predictions++;
       }
+
       epoch_loss += batch_loss;
 
-      // Backward pass
-      backwardPropagate(batch_images, batch_labels, current_learn_rate);
+      // Backward pass with momentum update
+      backwardPropagate(batch_images, batch_labels, current_learn_rate,
+                        momentum, kernel_velocity, bias_velocity);
 
-      if (step % 10 == 0) {
+      // Print progress every 50 batches
+      if (step % 50 == 0) {
+        double current_accuracy =
+            100.0 * correct_predictions / total_predictions;
         std::cout << "Epoch " << epoch + 1 << "/" << epochs << ", Batch "
-                  << step + 1 << "/" << steps_per_epoch
-                  << ", Batch Loss: " << batch_loss / current_batch_size
-                  << std::endl;
-      }
-      if (step % 10 == 3) {
-        break;
+                  << step << "/" << steps_per_epoch
+                  << ", Loss: " << batch_loss / current_batch_size
+                  << ", Accuracy: " << std::fixed << std::setprecision(2)
+                  << current_accuracy << "%" << std::endl;
       }
     }
 
-    // Statistics
-
-    epoch_loss /= num_samples;
-    double epoch_accuracy =
-        static_cast<double>(correct_predictions) / num_samples;
-
-    std::cout << "Epoch " << epoch + 1 << "/" << epochs
-              << ", Loss: " << epoch_loss
-              << ", Accuracy: " << epoch_accuracy * 100 << "%"
-              << ", Learning Rate: " << current_learn_rate << std::endl;
+    // Epoch statistics
+    double epoch_accuracy = 100.0 * correct_predictions / total_predictions;
+    std::cout << "\nEpoch " << epoch + 1 << "/" << epochs << " completed:"
+              << "\n - Average Loss: " << epoch_loss / num_samples
+              << "\n - Accuracy: " << std::fixed << std::setprecision(2)
+              << epoch_accuracy << "%"
+              << "\n - Learning Rate: " << current_learn_rate << std::endl;
   }
 }
 
-void Model::backwardPropagate(vector<image> training, vector<double> labels,
-                              double learn) {
+void Model::backwardPropagate(vector<image> &training, vector<double> &labels,
+                              double learn_rate, double momentum,
+                              vector<vector<vector<filter>>> &kernel_velocity,
+                              vector<vector<double>> &bias_velocity) {
   int batch_size = training.size();
-
   auto probabilities = forwardPropagate(training, true);
 
-  // Cross-entropy loss gradients
   std::cout << "c" << std::endl;
 
+  // Cross-entropy loss gradients
   vector<double> final_errors(10, 0.0);
   for (int img = 0; img < batch_size; img++) {
     for (int prob = 0; prob < 10; prob++) {
-      // Cross-entropy gradient: p_i - y_i
       int target = (prob == static_cast<int>(labels[img])) ? 1 : 0;
       final_errors[prob] += (probabilities[img][prob] - target) / batch_size;
     }
   }
 
-  // Now backpropagate
+  // Backpropagate through FC layers
   vector<vector<double>> deltas;
   deltas.push_back(final_errors);
 
@@ -176,14 +198,12 @@ void Model::backwardPropagate(vector<image> training, vector<double> labels,
     int next_layer_size = fully_connected.connected[clayer + 1].size;
     vector<double> node_deltas(current_layer_size, 0.0);
 
-    // Compute error gradients
     for (int node = 0; node < current_layer_size; node++) {
       for (int next_node = 0; next_node < next_layer_size; next_node++) {
         node_deltas[node] +=
             deltas[0][next_node] *
             fully_connected.connected[clayer + 1].weights[node][next_node];
       }
-      // ReLU derivative
       double activation_derivative =
           fully_connected.connected[clayer].data[node] > 0 ? 1.0 : 0.0;
       node_deltas[node] *= activation_derivative;
@@ -193,17 +213,15 @@ void Model::backwardPropagate(vector<image> training, vector<double> labels,
 
   std::cout << "d" << std::endl;
 
-  // Update fully connected layer weights
+  // Update FC layer weights with momentum
   std::cout << "FC layer update starting" << std::endl;
   std::cout << "FC size: " << fully_connected.size << std::endl;
 
-  // Update FC layer weights
   for (int clayer = 0; clayer < fully_connected.size; clayer++) {
     std::cout << "Updating FC layer: " << clayer << std::endl;
     const vector<double> &current_deltas = deltas[clayer];
 
     if (clayer == 0) {
-      // First layer
       int total_inputs = layers[num_layers - 1].kernels.size() *
                          layers[num_layers - 1].pooled_size *
                          layers[num_layers - 1].pooled_size;
@@ -218,8 +236,6 @@ void Model::backwardPropagate(vector<image> training, vector<double> labels,
           for (int i = 0; i < layers[num_layers - 1].pooled_size; i++) {
             for (int j = 0; j < layers[num_layers - 1].pooled_size; j++) {
               for (int k = 0; k < layers[num_layers - 1].kernels.size(); k++) {
-                // Each image contributes pooled_size * pooled_size features for
-                // each kernel
                 int prev_node_index = k * (layers[num_layers - 1].pooled_size *
                                            layers[num_layers - 1].pooled_size) +
                                       (i * layers[num_layers - 1].pooled_size) +
@@ -239,18 +255,28 @@ void Model::backwardPropagate(vector<image> training, vector<double> labels,
 
                 double grad = current_deltas[node] *
                               layers[num_layers - 1].pooled_data[k].entry[i][j];
+
+                // Apply momentum to FC weights
+                double velocity =
+                    momentum * kernel_velocity[0][k][0]
+                                   .fweights[prev_node_index][node] -
+                    learn_rate * grad / batch_size;
+                kernel_velocity[0][k][0].fweights[prev_node_index][node] =
+                    velocity;
                 fully_connected.connected[clayer]
-                    .weights[prev_node_index][node] -=
-                    learn * grad / batch_size;
+                    .weights[prev_node_index][node] += velocity;
               }
             }
           }
         }
-        fully_connected.connected[clayer].bias[node] -=
-            learn * current_deltas[node] / batch_size;
+        // Apply momentum to bias
+        double bias_velocity_val =
+            momentum * bias_velocity[clayer][node] -
+            learn_rate * current_deltas[node] / batch_size;
+        bias_velocity[clayer][node] = bias_velocity_val;
+        fully_connected.connected[clayer].bias[node] += bias_velocity_val;
       }
     } else {
-      // Other layers...
       int layer_size = fully_connected.connected[clayer].size;
       cLayer *prev_layer = &fully_connected.connected[clayer - 1];
 
@@ -259,16 +285,28 @@ void Model::backwardPropagate(vector<image> training, vector<double> labels,
              prev_node++) {
           double grad =
               current_deltas[node] * prev_layer->activation[prev_node];
-          fully_connected.connected[clayer].weights[prev_node][node] -=
-              learn * grad / batch_size;
+
+          // Apply momentum to FC weights
+          double velocity =
+              momentum *
+                  kernel_velocity[clayer][node][0].fweights[prev_node][0] -
+              learn_rate * grad / batch_size;
+          kernel_velocity[clayer][node][0].fweights[prev_node][0] = velocity;
+          fully_connected.connected[clayer].weights[prev_node][node] +=
+              velocity;
         }
-        fully_connected.connected[clayer].bias[node] -=
-            learn * current_deltas[node] / batch_size;
+        // Apply momentum to bias
+        double bias_velocity_val =
+            momentum * bias_velocity[clayer][node] -
+            learn_rate * current_deltas[node] / batch_size;
+        bias_velocity[clayer][node] = bias_velocity_val;
+        fully_connected.connected[clayer].bias[node] += bias_velocity_val;
       }
     }
   }
 
   std::cout << "e" << std::endl;
+
   // Initialize conv layer deltas
   vector<vector<vector<image>>> conv_deltas(num_layers);
   for (int l = 0; l < num_layers; l++) {
@@ -279,9 +317,10 @@ void Model::backwardPropagate(vector<image> training, vector<double> labels,
 
   std::cout << "f" << std::endl;
 
+  // Backpropagate through conv layers with momentum
   for (int conv_layer = num_layers - 1; conv_layer >= 0; conv_layer--) {
-    backpropConvLayer(conv_layer, conv_deltas[conv_layer], learn, batch_size,
-                      training);
+    backpropConvLayer(conv_layer, conv_deltas[conv_layer], learn_rate,
+                      batch_size, training);
   }
 }
 
@@ -302,7 +341,6 @@ void Model::backpropConvLayer(int layer_index,
             << unpooled_gradients[0].entry.size() << " x "
             << unpooled_gradients[0].entry[0].size() << std::endl;
 
-  // Step 1: Zero initialize gradients
   for (int k = 0; k < current_layer.kernels.size(); k++) {
     for (int i = 0; i < unpooled_gradients[k].entry.size(); i++) {
       for (int j = 0; j < unpooled_gradients[k].entry[0].size(); j++) {
@@ -311,14 +349,13 @@ void Model::backpropConvLayer(int layer_index,
     }
   }
 
-  // Step 2: Compute gradients for each kernel
   for (int k = 0; k < current_layer.kernels.size(); k++) {
     // For each pooling window
     for (int i = 0; i < current_layer.pooled_size; i++) {
       for (int j = 0; j < current_layer.pooled_size; j++) {
         if (current_layer.psize == 1) {
           // No pooling case - gradient flows directly
-          unpooled_gradients[k].entry[i][j] = 1.0; // Simple gradient for now
+          unpooled_gradients[k].entry[i][j] = 1.0;
         } else {
           // Find max in pooling window
           double max_val = -std::numeric_limits<double>::infinity();
@@ -360,7 +397,7 @@ void Model::backpropConvLayer(int layer_index,
     }
   }
 
-  // Step 3: Apply ReLU gradient
+  // ReLU
   for (int k = 0; k < current_layer.kernels.size(); k++) {
     for (int i = 0; i < unpooled_gradients[k].entry.size(); i++) {
       for (int j = 0; j < unpooled_gradients[k].entry[0].size(); j++) {
@@ -371,7 +408,7 @@ void Model::backpropConvLayer(int layer_index,
     }
   }
 
-  // Step 4: Compute kernel gradients
+  // Compute kernel gradients
   for (int k = 0; k < current_layer.kernels.size(); k++) {
     for (int c = 0; c < current_layer.kernels[k].size(); c++) {
       // For each weight in the 3x3 kernel
@@ -412,7 +449,7 @@ void Model::backpropConvLayer(int layer_index,
     current_layer.bias[k] -= learn_rate * bias_gradient;
   }
 
-  // Step 5: Compute gradients for previous layer if needed
+  // Recursively compute gradients
   if (layer_index > 0) {
     Layer &prev_layer = layers[layer_index - 1];
     vector<image> prev_layer_gradients(prev_layer.kernels.size(),
