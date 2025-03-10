@@ -6,14 +6,19 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-
 app.post("/run", (req, res) => {
   const input = req.body.input;
-  console.log("Request recieved")
+  console.log("Request recieved");
 
   const process = exec("./parser", (error, stdout, stderr) => {
-    if (error) return res.status(500).send(`Error: ${error.message}`);
-    if (stderr) return res.status(500).send(`Stderr: ${stderr}`);
+    if (error) {
+      console.log(error.message);
+      return res.status(500).send(`Error: ${error.message}`);
+    }
+    if (stderr) {
+      console.log(error.message);
+      return res.status(500).send(`Stderr: ${stderr}`);
+    }
     res.send({ output: stdout.trim() });
   });
   process.stdin.write(input);
@@ -22,5 +27,5 @@ app.post("/run", (req, res) => {
 
 const PORT = 3001;
 app.listen(PORT, () =>
-  console.log(`Server running on http://localhost:${PORT}`),
+  console.log(`Server running on port:${PORT}`),
 );
