@@ -21,21 +21,12 @@ ChartJS.register(
 );
 
 interface DataDisplayProps {
-  children: string;
+  children: Number[];
 }
 
 const DataDisplay: React.FC<DataDisplayProps> = ({ children }) => {
-  const parseStringToArray = (input: string): number[] => {
-    try {
-      const cleanedString = input.replace(/^\[|\]$/g, "");
-      return cleanedString.split(",").map(Number);
-    } catch (error) {
-      console.error("Error parsing data:", error);
-      return Array(10).fill(0);
-    }
-  };
 
-  const numericData = parseStringToArray(children);
+  const numericData = children;
 
   const labels = numericData.map((_, index) => `${index}`);
 

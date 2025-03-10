@@ -15,17 +15,17 @@ const Canvas: React.FC = () => {
 
   const handleRunProgram = async () => {
     try {
-      const response = await fetch("https://extraordinary-beauty-production.up.railway.app/run", {
+      console.log(vectorData);
+      const response = await fetch("http://127.0.0.1:5000/predict", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ input: vectorData }),
+        body: JSON.stringify({ image: vectorData }),
       });
 
       const data = await response.json();
-      console.log(data);
-      setOutput(data.output);
+      setOutput(data.probabilities);
     } catch (error) {
       console.error("Error:", error);
       setOutput("Error running program");
