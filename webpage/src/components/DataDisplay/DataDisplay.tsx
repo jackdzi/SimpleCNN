@@ -94,7 +94,7 @@ const DataDisplay: React.FC<DataDisplayProps> = ({ children }) => {
 
   return (
     <div style={{ width: "100%", height: "400px" }}>
-      <Bar data={data} options={options} />
+      <Bar data={data} options={options as any} />
     </div>
   );
 };
