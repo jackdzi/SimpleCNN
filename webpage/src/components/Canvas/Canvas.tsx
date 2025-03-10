@@ -6,7 +6,7 @@ import DataDisplay from "../DataDisplay/DataDisplay";
 const Canvas: React.FC = () => {
   const canvasRef = useRef(null);
   const { vectorData, setVectorData } = useVectorContext();
-  const [output, setOutput] = useState("[0,0,0,0,0,0,0,0,0,0]");
+  const [output, setOutput] = useState([0,0,0,0,0,0,0,0,0,0]);
 
   const handleUpdate = async (data: string) => {
     await new Promise((resolve) => setTimeout(resolve, 0));
@@ -16,7 +16,7 @@ const Canvas: React.FC = () => {
   const handleRunProgram = async () => {
     try {
       console.log(vectorData);
-      const response = await fetch("http://127.0.0.1:5000/predict", {
+      const response = await fetch("http://mnistrecog-production.up.railway.app/predict", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -28,7 +28,7 @@ const Canvas: React.FC = () => {
       setOutput(data.probabilities);
     } catch (error) {
       console.error("Error:", error);
-      setOutput("Error running program");
+      setOutput([0,0,0,0,0,0,0,0,0,0]);
     }
   };
 
