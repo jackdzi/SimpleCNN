@@ -16,7 +16,7 @@ const Canvas: React.FC = () => {
   const handleRunProgram = async () => {
     try {
       console.log(vectorData);
-      const response = await fetch("http://mnistrecog-production.up.railway.app/predict", {
+      const response = await fetch("https://mnistrecog-production.up.railway.app/predict", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
